@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Trading Pairs Graph</title>
+    <script src="node_modules/cytoscape/dist/cytoscape.js"></script>
+    <link rel="stylesheet" type="text/css" href="node_modules/cytoscape/dist/cytoscape.css">
+</head>
+<body>
+<div id="cy"></div>
+<script>
+    function visualizeGraph(){
+        const cy = cytoscape();
+
+        // Add nodes
+        for (const pair of this.nodes) {
+            cy.add({ data: { id: pair.toString() } });
+        }
+
+        // Add edges
+        for (const pair of this.nodes) {
+            for (const connection of pair.connections) {
+                cy.add({ data: { id: `${pair.toString()}-${connection.toString()+Math.random()}`, source: pair.toString(), target: connection.toString() } });
+            }
+        }
+
+        // Style the graph (optional)
+        cy.style([
+            {
+                selector: 'node',
+                style: {
+                    'background-color': '#3498db',
+                    label: 'data(id)',
+                },
+            },
+            {
+                selector: 'edge',
+                style: {
+                    'line-color': '#95a5a6',
+                },
+            },
+        ]);
+
+        // Generate a PNG image of the graph
+        const pngData = cy.png();
+
+        // Save the image to a file
+        writeFile('trading_pairs_graph.png', pngData, 'base64', (err) => {
+            if (err) throw err;
+            console.log('Trading pairs graph visualization saved as trading_pairs_graph.png');
+        });
+    }
+    visualizeGraph();
+
+</script>
+</body>
+</html>
